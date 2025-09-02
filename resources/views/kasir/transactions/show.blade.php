@@ -86,13 +86,18 @@
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Aksi</h3>
                 
-                <form action="{{ route('kasir.transactions.cancel', $transaction) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700" 
-                            onclick="return confirm('Yakin ingin membatalkan transaksi ini? Stok akan dikembalikan.')">
-                        Batalkan Transaksi
-                    </button>
-                </form>
+                <a href="#"
+                   class="js-ajax-confirm bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                   data-url="{{ route('kasir.transactions.cancel', $transaction) }}"
+                   data-method="POST"
+                   data-title="Batalkan transaksi?"
+                   data-text="Stok akan dikembalikan otomatis."
+                   data-icon="warning"
+                   data-success="Transaksi dibatalkan"
+                   data-fail="Gagal membatalkan"
+                   data-redirect="{{ route('kasir.transactions') }}">
+                    Batalkan Transaksi (AJAX)
+                </a>
             </div>
         </div>
     @endif
