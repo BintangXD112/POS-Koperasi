@@ -44,6 +44,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('kasir.transactions.show', $transaction) }}" class="text-blue-600 hover:text-blue-900 mr-3">Detail</a>
                                     @if($transaction->status === 'completed')
+                                        <a href="{{ route('kasir.transactions.print', $transaction) }}" target="_blank" class="text-green-600 hover:text-green-800 mr-3">Cetak</a>
                                         <form action="{{ route('kasir.transactions.cancel', $transaction) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin ingin membatalkan transaksi ini?')">Batalkan</button>

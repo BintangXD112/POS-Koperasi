@@ -59,10 +59,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <a href="{{ route('gudang.products.edit', $product) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                                    <form action="{{ route('gudang.products.delete', $product) }}" method="POST" class="inline">
+                                    <form action="{{ route('gudang.products.delete', $product) }}" method="POST" class="inline"
+                                          data-title="Hapus produk?" data-text="Produk akan dihapus permanen.">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin ingin menghapus produk ini?')">Hapus</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
                                     </form>
                                 </td>
                             </tr>

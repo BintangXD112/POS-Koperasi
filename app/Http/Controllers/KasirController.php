@@ -114,6 +114,16 @@ class KasirController extends Controller
         return view('kasir.transactions.show', compact('transaction'));
     }
 
+    public function printTransaction(Transaction $transaction)
+    {
+        if ($transaction->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $transaction->load('details.product', 'user');
+        return view('kasir.transactions.print', compact('transaction'));
+    }
+
     public function cancelTransaction(Transaction $transaction)
     {
         if ($transaction->user_id !== auth()->id()) {

@@ -4,32 +4,88 @@
 
 @section('content')
 <div class="space-y-6">
-    <div>
-        <h1 class="text-2xl font-semibold text-gray-900">Laporan Sistem</h1>
-        <p class="mt-1 text-sm text-gray-600">Analisis data dan laporan sistem koperasi</p>
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Laporan Sistem</h1>
+            <p class="mt-1 text-sm text-gray-600">Analisis data dan laporan sistem koperasi</p>
+        </div>
+        <form method="GET" action="{{ route('admin.reports') }}" class="flex items-end space-x-3">
+            <div>
+                <label class="block text-xs text-gray-600 mb-1">Tahun</label>
+                <select name="year" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    @for($y = date('Y'); $y >= date('Y') - 5; $y--)
+                        <option value="{{ $y }}" {{ (int)($year ?? date('Y')) === $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-600 mb-1">Bulan</label>
+                <select name="month" class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+                    <option value="">Semua</option>
+                    @for($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ (string)($month ?? '') === (string)$m ? 'selected' : '' }}>
+                            {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                        </option>
+                    @endfor
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">Terapkan</button>
+                <a href="{{ route('admin.reports.export', ['year' => $year ?? date('Y'), 'month' => $month ?? '']) }}"
+                   class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
+                    Export CSV
+                </a>
+            </div>
+        </form>
     </div>
 
     <!-- Monthly Revenue Chart -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Pendapatan Bulanan</h3>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                {{ empty($month) ? 'Pendapatan Bulanan' : 'Pendapatan Harian' }}
+                @if(!empty($month))
+                    ({{ date('F', mktime(0, 0, 0, (int)$month, 1)) }} {{ $year }})
+                @else
+                    (Tahun {{ $year }})
+                @endif
+            </h3>
             <div class="space-y-3">
-                @forelse($monthlyRevenue as $revenue)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">
-                                {{ date('F', mktime(0, 0, 0, intval($revenue->month), 1)) }}
-                            </p>
+                @if(empty($month))
+                    @forelse($monthlyRevenue as $revenue)
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ date('F', mktime(0, 0, 0, intval($revenue->month), 1)) }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-green-600">
+                                    Rp {{ number_format($revenue->revenue, 0, ',', '.') }}
+                                </p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="text-sm font-medium text-green-600">
-                                Rp {{ number_format($revenue->revenue, 0, ',', '.') }}
-                            </p>
+                    @empty
+                        <p class="text-gray-500 text-center py-4">Belum ada data pendapatan</p>
+                    @endforelse
+                @else
+                    @forelse($dailyRevenue as $revenue)
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ \Carbon\Carbon::parse($revenue->day)->format('d F Y') }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-green-600">
+                                    Rp {{ number_format($revenue->revenue, 0, ',', '.') }}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <p class="text-gray-500 text-center py-4">Belum ada data pendapatan</p>
-                @endforelse
+                    @empty
+                        <p class="text-gray-500 text-center py-4">Belum ada data pendapatan</p>
+                    @endforelse
+                @endif
             </div>
         </div>
     </div>
@@ -70,7 +126,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Transaksi</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $monthlyRevenue->sum('revenue') > 0 ? $monthlyRevenue->count() : 0 }}</dd>
+                            <dd class="text-lg font-medium text-gray-900">{{ $totalTransactionsFiltered }}</dd>
                         </dl>
                     </div>
                 </div>
@@ -88,7 +144,7 @@
                     <div class="ml-5 w-0 flex-1">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Pendapatan</dt>
-                            <dd class="text-lg font-medium text-gray-900">Rp {{ number_format($monthlyRevenue->sum('revenue'), 0, ',', '.') }}</dd>
+                            <dd class="text-lg font-medium text-gray-900">Rp {{ number_format($totalRevenueSum, 0, ',', '.') }}</dd>
                         </dl>
                     </div>
                 </div>

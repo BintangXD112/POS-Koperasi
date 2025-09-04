@@ -29,12 +29,19 @@ class ActiveSession
 			$request->session()->invalidate();
 			$request->session()->regenerateToken();
 
-			return redirect()->route('login')->with('error', 'Sesi berakhir karena tidak ada aktivitas. Silakan login kembali.');
+			return redirect('/login')->with('error', 'Sesi berakhir karena tidak ada aktivitas. Silakan login kembali.');
 		}
 
 		// Update last activity timestamp
 		$request->session()->put('last_activity', $now);
 
-		return $next($request);
+		$response = $next($request);
+
+		// Prevent caching on authenticated pages to block back navigation after logout
+		$response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+		$response->headers->set('Pragma', 'no-cache');
+		$response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+
+		return $response;
 	}
 }

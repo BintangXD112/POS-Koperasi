@@ -28,7 +28,7 @@ Aplikasi sistem koperasi yang dibangun dengan Laravel 11, menampilkan manajemen 
 ## 🛠️ Teknologi yang Digunakan
 
 - **Backend**: Laravel 11
-- **Database**: MySQL
+- **Database**: Sqlite
 - **Frontend**: Tailwind CSS + Alpine.js
 - **Authentication**: Laravel Built-in Auth
 - **Middleware**: Custom Role-based Access Control
@@ -37,7 +37,7 @@ Aplikasi sistem koperasi yang dibangun dengan Laravel 11, menampilkan manajemen 
 
 - PHP 8.2+
 - Composer
-- MySQL 5.7+
+- Sqlite 3
 - Web Server (Apache/Nginx) atau PHP Built-in Server
 
 ## 🚀 Instalasi
@@ -63,12 +63,12 @@ php artisan key:generate
 ### 4. Konfigurasi Database
 Edit file `.env` dan sesuaikan konfigurasi database:
 ```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
+DB_CONNECTION=sqlite
+<!-- DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=koperasi_db
 DB_USERNAME=root
-DB_PASSWORD=
+DB_PASSWORD= -->
 ```
 
 ### 5. Jalankan Migration dan Seeder
@@ -81,7 +81,7 @@ php artisan migrate:fresh --seed
 php artisan serve
 ```
 
-Aplikasi akan berjalan di `http://localhost:8000`
+Aplikasi akan berjalan di `http://127.0.0.1:8000`
 
 ## 🔐 Login Default
 
@@ -89,7 +89,15 @@ Setelah menjalankan seeder, gunakan akun default:
 
 **Admin:**
 - Email: `admin@koperasi.com`
-- Password: `password`
+- Password: `Admin123`
+
+**Kasir:**
+- Email: `kasir@gmail.com`
+- Password: `Kasir123`
+
+**Admin:**
+- Email: `gudang@gmail.com`
+- Password: `Gudang123`
 
 ## 📊 Struktur Database
 

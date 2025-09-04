@@ -9,9 +9,14 @@
             <h1 class="text-2xl font-semibold text-gray-900">Detail Transaksi</h1>
             <p class="mt-1 text-sm text-gray-600">Informasi lengkap transaksi {{ $transaction->transaction_number }}</p>
         </div>
-        <a href="{{ route('kasir.transactions') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Kembali
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('kasir.transactions.print', $transaction) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                Cetak Struk
+            </a>
+            <a href="{{ route('kasir.transactions') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Kembali
+            </a>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -86,6 +91,9 @@
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Aksi</h3>
                 
+                <a href="{{ route('kasir.transactions.print', $transaction) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 mr-3">
+                    Cetak Struk
+                </a>
                 <a href="#"
                    class="js-ajax-confirm bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
                    data-url="{{ route('kasir.transactions.cancel', $transaction) }}"

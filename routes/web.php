@@ -8,8 +8,49 @@ use App\Http\Controllers\GudangController;
 // Authentication routes
 Route::middleware('guest')->group(function () {
 	Route::get('/login', function () {
-		return view('auth.login');
+		return response()
+			->view('auth.login')
+			->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+			->header('Pragma', 'no-cache')
+			->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
 	})->name('login');
+
+	// Forgot password
+	Route::get('/forgot-password', function () {
+		return view('auth.forgot-password');
+	})->name('password.request');
+
+	Route::post('/forgot-password', function () {
+		request()->validate(['email' => 'required|email']);
+		\Illuminate\Support\Facades\Password::sendResetLink(request()->only('email'));
+		return back()->with('success', 'Jika email terdaftar, link reset telah dikirim.');
+	})->name('password.email');
+
+	Route::get('/reset-password/{token}', function (string $token) {
+		return view('auth.reset-password', ['token' => $token, 'email' => request('email')]);
+	})->name('password.reset');
+
+	Route::post('/reset-password', function () {
+		request()->validate([
+			'token' => 'required',
+			'email' => 'required|email',
+			'password' => 'required|min:8|confirmed',
+		]);
+
+		$status = \Illuminate\Support\Facades\Password::reset(
+			request(['email', 'password', 'password_confirmation', 'token']),
+			function ($user, $password) {
+				$user->forceFill([
+					'password' => \Illuminate\Support\Facades\Hash::make($password),
+					'remember_token' => \Illuminate\Support\Str::random(60),
+				])->save();
+			}
+		);
+
+		return $status == \Illuminate\Support\Facades\Password::PASSWORD_RESET
+			? redirect('/login')->with('success', 'Password berhasil direset, silakan login.')
+			: back()->with('error', 'Token tidak valid atau email tidak cocok.');
+	})->name('password.update');
 
 	Route::post('/login', function () {
 		$credentials = request()->only('email', 'password');
@@ -40,8 +81,11 @@ Route::post('/logout', function () {
 	auth()->logout();
 	request()->session()->invalidate();
 	request()->session()->regenerateToken();
-	return redirect()->route('login')->with('success', 'Anda telah logout. Sampai jumpa!');
+	return redirect('/login')->with('success', 'Anda telah logout. Sampai jumpa!');
 })->name('logout');
+
+// Note: Authenticated users are already blocked from guest routes by 'guest' middleware
+// and will be redirected to '/'. The root route below will forward them to their role dashboard.
 
 // Admin routes
 Route::middleware(['auth', 'active.session', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -53,6 +97,7 @@ Route::middleware(['auth', 'active.session', 'role:admin'])->prefix('admin')->na
 	Route::put('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
 	Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 	Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
+	Route::get('/reports/export', [AdminController::class, 'exportReports'])->name('reports.export');
 });
 
 // Kasir routes
@@ -63,6 +108,7 @@ Route::middleware(['auth', 'active.session', 'role:kasir'])->prefix('kasir')->na
 	Route::get('/transactions', [KasirController::class, 'transactions'])->name('transactions');
 	Route::get('/transactions/{transaction}', [KasirController::class, 'showTransaction'])->name('transactions.show');
 	Route::post('/transactions/{transaction}/cancel', [KasirController::class, 'cancelTransaction'])->name('transactions.cancel');
+	Route::get('/transactions/{transaction}/print', [KasirController::class, 'printTransaction'])->name('transactions.print');
 	Route::get('/search-products', [KasirController::class, 'searchProduct'])->name('search.products');
 });
 
@@ -98,5 +144,5 @@ Route::get('/', function () {
 		}
 	}
 
-	return redirect()->route('login');
+	return redirect('/login');
 });

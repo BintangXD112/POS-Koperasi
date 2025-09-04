@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Gudang')
+@section('title')@endsection
 
 @section('content')
 <div class="space-y-6">
     <div>
-        <h1 class="text-2xl font-semibold text-gray-900">Dashboard Gudang</h1>
-        <p class="mt-1 text-sm text-gray-600">Selamat datang di panel gudang sistem koperasi</p>
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Dashboard Gudang</span>
+            <p class="mt-1 text-sm text-gray-600">Selamat datang di panel gudang sistem koperasi</p>
+        </div>
     </div>
 
     <!-- Stats Cards -->
