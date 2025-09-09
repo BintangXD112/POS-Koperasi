@@ -22,9 +22,9 @@
                 </div>
 
                 <!-- Product List -->
-                <div class="space-y-2 max-h-96 overflow-y-auto">
+                <div id="productList" class="space-y-2 max-h-96 overflow-y-auto">
                     @forelse($products as $product)
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50 {{ $product->stock <= 0 ? 'opacity-60' : '' }}">
                             <div>
                                 <p class="font-medium text-gray-900">{{ $product->name }}</p>
                                 <p class="text-sm text-gray-500">{{ $product->category->name }} | Stok: {{ $product->stock }}</p>
@@ -32,7 +32,8 @@
                             <div class="text-right">
                                 <p class="font-medium text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                                 <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }}, {{ $product->stock }})" 
-                                        class="mt-1 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                                        {{ $product->stock <= 0 ? 'disabled' : '' }}
+                                        class="mt-1 px-3 py-1 text-white text-sm rounded {{ $product->stock <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700' }}">
                                     Tambah
                                 </button>
                             </div>
@@ -91,6 +92,10 @@ let cart = [];
 let cartTotal = 0;
 
 function addToCart(productId, productName, price, stock) {
+    if (!stock || stock <= 0) {
+        alert('Produk sedang kehabisan stok.');
+        return;
+    }
     const existingItem = cart.find(item => item.product_id === productId);
     
     if (existingItem) {
@@ -176,17 +181,17 @@ function updateCartDisplay() {
 }
 
 // Search functionality
-document.getElementById('searchProduct').addEventListener('input', function(e) {
+const searchInput = document.getElementById('searchProduct');
+const productList = document.getElementById('productList');
+searchInput.addEventListener('input', function(e) {
     const searchTerm = e.target.value.toLowerCase();
-    const productItems = document.querySelectorAll('#cartItems').previousElementSibling.querySelectorAll('.border');
-    
+    const productItems = productList.querySelectorAll('.border');
+
     productItems.forEach(item => {
-        const productName = item.querySelector('.font-medium').textContent.toLowerCase();
-        if (productName.includes(searchTerm)) {
-            item.style.display = 'block';
-        } else {
-            item.style.display = 'none';
-        }
+        const nameEl = item.querySelector('.font-medium');
+        const productName = nameEl ? nameEl.textContent.toLowerCase() : '';
+        const isMatch = productName.includes(searchTerm);
+        item.style.display = isMatch ? 'flex' : 'none';
     });
 });
 </script>

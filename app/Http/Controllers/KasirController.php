@@ -25,7 +25,11 @@ class KasirController extends Controller
     public function pos()
     {
         $categories = Category::with('products')->get();
-        $products = Product::inStock()->with('category')->get();
+        // Include out-of-stock products but order them to the bottom
+        $products = Product::with('category')
+            ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END')
+            ->orderBy('name')
+            ->get();
         
         return view('kasir.pos', compact('categories', 'products'));
     }
