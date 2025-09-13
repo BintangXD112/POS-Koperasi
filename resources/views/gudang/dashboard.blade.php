@@ -1,84 +1,103 @@
 @extends('layouts.app')
 
-@section('title')@endsection
+@section('title', 'Dashboard Gudang')
+@section('subtitle', 'Panel manajemen gudang sistem koperasi')
 
 @section('content')
 <div class="space-y-6">
-    <div>
-        <div class="flex items-center gap-3">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Dashboard Gudang</span>
-            <p class="mt-1 text-sm text-gray-600">Selamat datang di panel gudang sistem koperasi</p>
+    <!-- Welcome Section -->
+    <div class="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-6 text-white">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">Selamat Datang, {{ auth()->user()->name }}!</h1>
+                <p class="text-yellow-100 text-sm sm:text-base">Panel manajemen gudang - Kelola stok dan inventori produk</p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl card-hover">
+            <div class="p-4 sm:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
+                    <div class="ml-4 flex-1 min-w-0">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Produk</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $totalProducts }}</dd>
+                            <dd class="text-2xl font-bold text-gray-900">{{ $totalProducts }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl card-hover">
+            <div class="p-4 sm:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
+                    <div class="ml-4 flex-1 min-w-0">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Stok Menipis</dt>
-                            <dd class="text-lg font-medium text-yellow-600">{{ $lowStockProducts }}</dd>
+                            <dd class="text-2xl font-bold text-yellow-600">{{ $lowStockProducts }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl card-hover">
+            <div class="p-4 sm:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
+                    <div class="ml-4 flex-1 min-w-0">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Habis Stok</dt>
-                            <dd class="text-lg font-medium text-red-600">{{ $outOfStockProducts }}</dd>
+                            <dd class="text-2xl font-bold text-red-600">{{ $outOfStockProducts }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
+        <div class="bg-white overflow-hidden shadow-lg rounded-xl card-hover">
+            <div class="p-4 sm:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
+                    <div class="ml-4 flex-1 min-w-0">
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Kategori</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ $totalCategories }}</dd>
+                            <dd class="text-2xl font-bold text-gray-900">{{ $totalCategories }}</dd>
                         </dl>
                     </div>
                 </div>

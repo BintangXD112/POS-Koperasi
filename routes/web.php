@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\GudangController;
+use App\Http\Controllers\ChatController;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -83,6 +84,15 @@ Route::post('/logout', function () {
 	request()->session()->regenerateToken();
 	return redirect('/login')->with('success', 'Anda telah logout. Sampai jumpa!');
 })->name('logout');
+
+// Global Group Chat (All roles)
+Route::middleware(['auth', 'active.session'])->group(function () {
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('/chat/latest', [ChatController::class, 'latest'])->name('chat.latest');
+    Route::post('/chat/clear', [ChatController::class, 'clear'])->name('chat.clear');
+    Route::delete('/chat/messages/{message}', [ChatController::class, 'delete'])->name('chat.delete');
+});
 
 // Note: Authenticated users are already blocked from guest routes by 'guest' middleware
 // and will be redirected to '/'. The root route below will forward them to their role dashboard.
