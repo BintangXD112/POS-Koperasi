@@ -57,6 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
     public function isAdmin()
     {
         return $this->role && $this->role->isAdmin();

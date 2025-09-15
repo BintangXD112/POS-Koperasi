@@ -155,7 +155,7 @@
             <div class="px-4 py-5 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Produk Stok Menipis</h3>
-                    <a href="{{ route('gudang.products') }}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">Kelola Stok</a>
+                    <!-- <a href="{{ route('gudang.products') }}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">Kelola Stok</a> -->
                 </div>
                 <div class="space-y-3">
                     @forelse($lowStockProducts as $product)

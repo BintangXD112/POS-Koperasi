@@ -104,7 +104,7 @@
                    data-success="Transaksi dibatalkan"
                    data-fail="Gagal membatalkan"
                    data-redirect="{{ route('kasir.transactions') }}">
-                    Batalkan Transaksi (AJAX)
+                    Batalkan Transaksi
                 </a>
             </div>
         </div>

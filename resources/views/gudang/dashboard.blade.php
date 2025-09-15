@@ -181,6 +181,7 @@
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Produk Stok Menipis</h3>
+                    <!-- <a href="{{ route('gudang.products') }}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">Kelola Stok</a> -->
                 <div class="space-y-3">
                     @forelse($lowStockList as $product)
                         <div class="flex items-center justify-between p-3 bg-red-50 rounded-md">

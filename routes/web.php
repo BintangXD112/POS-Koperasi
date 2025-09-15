@@ -5,6 +5,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\GudangController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\StoreSettingController;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -63,6 +66,9 @@ Route::middleware('guest')->group(function () {
 			request()->session()->put('last_activity', now()->timestamp);
 			request()->session()->flash('success', 'Login berhasil. Selamat datang!');
 
+			// Log login activity
+			\App\Models\ActivityLog::log('login', 'User berhasil login ke sistem');
+
 			$user = auth()->user();
 			if ($user->isAdmin()) {
 				return redirect()->route('admin.dashboard');
@@ -71,6 +77,25 @@ Route::middleware('guest')->group(function () {
 			} elseif ($user->isGudang()) {
 				return redirect()->route('gudang.dashboard');
 			}
+		} else {
+			// Check if user exists in database
+			$user = \App\Models\User::where('email', $credentials['email'])->first();
+			
+			if ($user) {
+				// User exists but wrong password
+				\App\Models\ActivityLog::log('failed_login', 'Login gagal - password salah', [
+					'email' => $credentials['email'],
+					'user_id' => $user->id,
+					'user_name' => $user->name,
+					'user_role' => $user->role->display_name ?? 'Unknown'
+				]);
+			} else {
+				// User not found in database
+				\App\Models\ActivityLog::log('failed_login', 'Login gagal - user tidak dikenal', [
+					'email' => $credentials['email'],
+					'user_exists' => false
+				]);
+			}
 		}
 		
 		return back()->withErrors(['email' => 'Email atau password salah']);
@@ -78,6 +103,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', function () {
+	// Log logout activity before logout
+	\App\Models\ActivityLog::log('logout', 'User logout dari sistem');
+	
 	// Logout aman dan invalidate session
 	auth()->logout();
 	request()->session()->invalidate();
@@ -94,6 +122,12 @@ Route::middleware(['auth', 'active.session'])->group(function () {
     Route::delete('/chat/messages/{message}', [ChatController::class, 'delete'])->name('chat.delete');
 });
 
+// Profile routes (All authenticated users)
+Route::middleware(['auth', 'active.session'])->group(function () {
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
 // Note: Authenticated users are already blocked from guest routes by 'guest' middleware
 // and will be redirected to '/'. The root route below will forward them to their role dashboard.
 
@@ -108,6 +142,19 @@ Route::middleware(['auth', 'active.session', 'role:admin'])->prefix('admin')->na
 	Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 	Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
 	Route::get('/reports/export', [AdminController::class, 'exportReports'])->name('reports.export');
+	
+	// Activity Logs
+	Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs');
+	Route::get('/activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+	Route::get('/activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
+	Route::get('/activity-logs/statistics', [ActivityLogController::class, 'statistics'])->name('activity-logs.statistics');
+	
+	// Store Settings
+	Route::get('/store-settings', [StoreSettingController::class, 'index'])->name('store-settings');
+	Route::put('/store-settings', [StoreSettingController::class, 'update'])->name('store-settings.update');
+	Route::delete('/store-settings/logo', [StoreSettingController::class, 'removeLogo'])->name('store-settings.remove-logo');
+	Route::get('/store-settings/api', [StoreSettingController::class, 'getSettings'])->name('store-settings.api');
+	Route::get('/store-settings/timezones', [StoreSettingController::class, 'getTimezones'])->name('store-settings.timezones');
 });
 
 // Kasir routes
