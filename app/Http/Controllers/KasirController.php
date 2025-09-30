@@ -8,6 +8,9 @@ use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\Category;
 use Illuminate\Support\Str;
+use App\Exports\TransactionsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KasirController extends Controller
 {
@@ -99,13 +102,32 @@ class KasirController extends Controller
             ->with('success', 'Transaksi berhasil dibuat');
     }
 
-    public function transactions()
+    public function transactions(Request $request)
     {
-        $transactions = Transaction::with('user')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(15);
+        $query = Transaction::with('user')
+            ->where('user_id', auth()->id());
+
+        // Apply filters
+        if ($request->has('period')) {
+            $period = $request->get('period');
             
+            if ($period === 'today') {
+                $query->whereRaw('date(created_at) = date(?)', [now()]);
+            } elseif ($period === 'week') {
+                $query->whereRaw('date(created_at) >= date(?, "-7 days")', [now()]);
+            } elseif ($period === 'month') {
+                $query->whereRaw('strftime("%Y-%m", created_at) = strftime("%Y-%m", ?)', [now()]);
+            } elseif ($period === 'custom') {
+                if ($request->has('start_date') && $request->has('end_date')) {
+                    $startDate = $request->get('start_date');
+                    $endDate = $request->get('end_date');
+                    $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                }
+            }
+        }
+
+        $transactions = $query->latest()->paginate(15);
+        
         return view('kasir.transactions.index', compact('transactions'));
     }
 
@@ -146,5 +168,58 @@ class KasirController extends Controller
         $transaction->update(['status' => 'cancelled']);
 
         return back()->with('success', 'Transaksi berhasil dibatalkan');
+    }
+
+    public function exportTransactions(Request $request)
+    {
+        $format = $request->get('format', 'excel');
+        $query = Transaction::with(['user', 'details.product'])
+            ->where('user_id', auth()->id());
+
+        // Apply same filters as transactions method
+        if ($request->has('period')) {
+            $period = $request->get('period');
+            
+            if ($period === 'today') {
+                $query->whereRaw('date(created_at) = date(?)', [now()]);
+            } elseif ($period === 'week') {
+                $query->whereRaw('date(created_at) >= date(?, "-7 days")', [now()]);
+            } elseif ($period === 'month') {
+                $query->whereRaw('strftime("%Y-%m", created_at) = strftime("%Y-%m", ?)', [now()]);
+            } elseif ($period === 'custom') {
+                if ($request->has('start_date') && $request->has('end_date')) {
+                    $startDate = $request->get('start_date');
+                    $endDate = $request->get('end_date');
+                    $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                }
+            }
+        }
+
+        $transactions = $query->latest()->get();
+
+        // Generate filename based on filter
+        $filename = 'riwayat_transaksi_' . date('Y-m-d');
+        if ($request->has('period')) {
+            $period = $request->get('period');
+            if ($period === 'today') {
+                $filename .= '_hari_ini';
+            } elseif ($period === 'week') {
+                $filename .= '_minggu_ini';
+            } elseif ($period === 'month') {
+                $filename .= '_bulan_ini';
+            } elseif ($period === 'custom' && $request->has('start_date') && $request->has('end_date')) {
+                $startDate = \Carbon\Carbon::parse($request->get('start_date'))->format('Y-m-d');
+                $endDate = \Carbon\Carbon::parse($request->get('end_date'))->format('Y-m-d');
+                $filename .= '_' . $startDate . '_sampai_' . $endDate;
+            }
+        }
+
+        if ($format === 'pdf') {
+            $pdf = Pdf::loadView('kasir.transactions.export-pdf', compact('transactions'));
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->download($filename . '.pdf');
+        } else {
+            return Excel::download(new TransactionsExport($transactions), $filename . '.xlsx');
+        }
     }
 }

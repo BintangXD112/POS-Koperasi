@@ -9,6 +9,9 @@ use App\Models\Transaction;
 use App\Models\Product;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Exports\ReportsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -138,29 +141,29 @@ class AdminController extends Controller
 		return view('admin.reports', compact('monthlyRevenue','dailyRevenue','topProducts','year','month','totalTransactionsFiltered','totalRevenueSum'));
 	}
 
-	public function exportReports(Request $request): StreamedResponse
+	public function exportReports(Request $request)
 	{
+		$format = $request->get('format', 'excel');
 		$year = (int) ($request->get('year') ?: date('Y'));
 		$month = (string) ($request->get('month') ?: '');
 		$yearStr = (string) $year;
 		$monthStr = $month !== '' ? str_pad($month, 2, '0', STR_PAD_LEFT) : '';
 
 		$transactions = Transaction::completed()
+			->with(['user', 'details.product'])
 			->whereRaw('substr(created_at,1,4) = ?', [$yearStr])
 			->when($monthStr !== '', function ($q) use ($monthStr) { $q->whereRaw('substr(created_at,6,2) = ?', [$monthStr]); })
 			->orderBy('created_at', 'asc')
-			->get(['transaction_number','user_id','total_amount','status','created_at']);
+			->get();
 
-		$filename = 'laporan_koperasi_' . $yearStr . ($monthStr !== '' ? '_' . $monthStr : '') . '.csv';
-		$headers = ['Content-Type'=>'text/csv','Content-Disposition'=>'attachment; filename="'.$filename.'"'];
-		$callback = function () use ($transactions) {
-			$out = fopen('php://output', 'w');
-			fputcsv($out, ['No Transaksi','User ID','Total','Status','Tanggal']);
-			foreach ($transactions as $t) {
-				fputcsv($out, [$t->transaction_number, $t->user_id, number_format((float)$t->total_amount, 2, '.', ''), $t->status, $t->created_at]);
-			}
-			fclose($out);
-		};
-		return response()->stream($callback, 200, $headers);
+		$filename = 'laporan_koperasi_' . $yearStr . ($monthStr !== '' ? '_' . $monthStr : '');
+
+		if ($format === 'pdf') {
+			$pdf = Pdf::loadView('admin.reports.export-pdf', compact('transactions', 'year', 'month'));
+			$pdf->setPaper('A4', 'landscape');
+			return $pdf->download($filename . '.pdf');
+		} else {
+			return Excel::download(new ReportsExport($transactions, $year, $month), $filename . '.xlsx');
+		}
 	}
 }

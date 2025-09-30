@@ -17,28 +17,229 @@
 		#sidebar.collapsed nav a { justify-content: center; gap: 0; }
 		#sidebar.collapsed #sidebarCollapseToggle svg { transform: rotate(180deg); }
 		
-		/* Modern scrollbar */
-		::-webkit-scrollbar { width: 6px; }
-		::-webkit-scrollbar-track { background: #f1f5f9; }
-		::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-		::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+		/* Enhanced scrollbar */
+		::-webkit-scrollbar { width: 8px; }
+		::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
+		::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #cbd5e1, #94a3b8); border-radius: 4px; }
+		::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #94a3b8, #64748b); }
 		
-		/* Smooth transitions */
-		* { transition: all 0.2s ease-in-out; }
-		
-		/* Glass effect for mobile sidebar */
-		.mobile-sidebar {
-			backdrop-filter: blur(10px);
-			background: rgba(30, 41, 59, 0.95);
+		/* Smooth transitions with better performance */
+		* { 
+			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 		
-		/* Card hover effects */
+		/* Enhanced glass effect for mobile sidebar */
+		.mobile-sidebar {
+			backdrop-filter: blur(20px);
+			background: rgba(15, 23, 42, 0.95);
+			border-right: 1px solid rgba(255, 255, 255, 0.1);
+		}
+		
+		/* Enhanced card hover effects */
 		.card-hover {
-			transition: all 0.3s ease;
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 		.card-hover:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+			transform: translateY(-4px);
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+		}
+		
+		/* Modern gradient backgrounds */
+		.gradient-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		}
+		.gradient-secondary {
+			background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+		}
+		.gradient-success {
+			background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+		}
+		.gradient-warning {
+			background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+		}
+		
+		/* Enhanced animations */
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+		
+		@keyframes slideInRight {
+			from {
+				opacity: 0;
+				transform: translateX(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+		
+		.animate-fade-in-up {
+			animation: fadeInUp 0.6s ease-out;
+		}
+		
+		.animate-slide-in-right {
+			animation: slideInRight 0.5s ease-out;
+		}
+		
+		/* Modern focus styles */
+		.focus-ring {
+			transition: all 0.2s ease;
+		}
+		.focus-ring:focus {
+			outline: none;
+			ring: 2px;
+			ring-color: #3b82f6;
+			ring-offset: 2px;
+		}
+		
+		/* Enhanced button styles */
+		.btn-modern {
+			position: relative;
+			overflow: hidden;
+			transition: all 0.3s ease;
+		}
+		.btn-modern::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+			transition: left 0.5s;
+		}
+		.btn-modern:hover::before {
+			left: 100%;
+		}
+		
+		/* User dropdown z-index fix */
+		.user-dropdown {
+			z-index: 99999 !important;
+			position: relative;
+		}
+		
+		.user-dropdown .dropdown-card {
+			z-index: 99999 !important;
+			position: absolute;
+		}
+		
+		/* Ensure dropdown is above everything */
+		[x-data] .dropdown-card {
+			z-index: 99999 !important;
+		}
+		
+		/* Force dropdown to be on top */
+		.user-dropdown .dropdown-card {
+			z-index: 99999 !important;
+			position: absolute !important;
+			top: 100% !important;
+			right: 0 !important;
+			margin-top: 0.5rem !important;
+		}
+		
+		/* Override any conflicting styles */
+		.user-dropdown .dropdown-card * {
+			position: relative !important;
+		}
+		
+		/* Ensure dropdown is always visible */
+		.user-dropdown .dropdown-card {
+			z-index: 999999 !important;
+			position: absolute !important;
+			right: 0 !important;
+			top: 100% !important;
+			margin-top: 0.5rem !important;
+			background: white !important;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+		}
+		
+		/* Force all content to be above dropdown */
+		.user-dropdown .dropdown-card::before {
+			content: '';
+			position: absolute;
+			top: -10px;
+			right: 0;
+			width: 100%;
+			height: 10px;
+			background: transparent;
+			z-index: 999999;
+		}
+		
+		/* Ultimate z-index fix */
+		.user-dropdown {
+			z-index: 999999 !important;
+			position: relative !important;
+		}
+		
+		.user-dropdown .dropdown-card {
+			z-index: 999999 !important;
+			position: absolute !important;
+			right: 0 !important;
+			top: 100% !important;
+			margin-top: 0.5rem !important;
+		}
+		
+		/* Force dropdown to be above everything */
+		.user-dropdown .dropdown-card {
+			z-index: 999999 !important;
+			position: absolute !important;
+			right: 0 !important;
+			top: 100% !important;
+			margin-top: 0.5rem !important;
+			background: white !important;
+			border: 1px solid #e5e7eb !important;
+			border-radius: 0.75rem !important;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+		}
+		
+		/* Ultimate fix for dropdown positioning */
+		.user-dropdown {
+			z-index: 999999 !important;
+			position: relative !important;
+		}
+		
+		.user-dropdown .dropdown-card {
+			z-index: 999999 !important;
+			position: absolute !important;
+			right: 0 !important;
+			top: 100% !important;
+			margin-top: 0.5rem !important;
+			background: white !important;
+			border: 1px solid #e5e7eb !important;
+			border-radius: 0.75rem !important;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+			transform: none !important;
+		}
+		
+		/* Force all other elements to have lower z-index */
+		.flex-1 {
+			z-index: 1 !important;
+		}
+		
+		.bg-white {
+			z-index: 1 !important;
+		}
+		
+		/* Ensure dropdown is always on top */
+		.user-dropdown .dropdown-card {
+			z-index: 999999 !important;
+			position: absolute !important;
+			right: 0 !important;
+			top: 100% !important;
+			margin-top: 0.5rem !important;
+			background: white !important;
+			border: 1px solid #e5e7eb !important;
+			border-radius: 0.75rem !important;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+			transform: none !important;
 		}
 	</style>
 </head>
@@ -49,54 +250,57 @@
 		
 		<!-- Sidebar - Always visible on desktop, overlay on mobile -->
 		<div id="sidebar" class="hidden lg:flex lg:flex-shrink-0 z-50">
-			<div id="sidebarInner" class="flex flex-col w-64 bg-gradient-to-b from-slate-800 to-slate-900 transition-all duration-300 ease-in-out shadow-2xl">
-				<div class="flex items-center justify-between h-16 px-6 bg-slate-900 border-b border-slate-700">
+			<div id="sidebarInner" class="flex flex-col w-64 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 transition-all duration-300 ease-in-out shadow-2xl border-r border-slate-700/50">
+				<div class="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700/50">
 					<div class="flex items-center space-x-3">
-						<div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-							<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+							<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
 							</svg>
 						</div>
-						<h1 class="text-xl font-bold text-white sidebar-label">{{ $storeSettings['name'] ?? 'Sistem Koperasi' }}</h1>
+						<h1 class="text-xl font-bold text-white sidebar-label tracking-tight">{{ $storeSettings['name'] ?? 'Sistem Koperasi' }}</h1>
 					</div>
 				</div>
 				
 				<nav class="mt-6 px-4 flex-1 overflow-y-auto">
 					@if(auth()->check() && auth()->user()->isAdmin())
 						<div class="mb-6">
-							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-3 px-2">Admin</h3>
+							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-4 px-2 flex items-center">
+								<div class="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+								Admin
+							</h3>
 							<div class="space-y-1">
-								<a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" /></svg>
 									</span>
 									<span class="sidebar-label">Dashboard</span>
 								</a>
-								<a href="{{ route('admin.users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('admin.users') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M15 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
 									</span>
 									<span class="sidebar-label">Manajemen User</span>
 								</a>
-								<a href="{{ route('admin.reports') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('admin.reports') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6a2 2 0 012-2h8m-6 8h6M9 5h12" /></svg>
 									</span>
 									<span class="sidebar-label">Laporan</span>
 								</a>
-								<a href="{{ route('admin.activity-logs') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('admin.activity-logs') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
 									</span>
 									<span class="sidebar-label">Log Aktivitas</span>
 								</a>
-								<a href="{{ route('admin.store-settings') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('admin.store-settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
 									</span>
 									<span class="sidebar-label">Pengaturan Toko</span>
 								</a>
-								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2H7l-4 4V10a2 2 0 012-2h2"/></svg>
 									</span>
@@ -108,27 +312,30 @@
 
 					@if(auth()->check() && auth()->user()->isKasir())
 						<div class="mb-6">
-							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-3 px-2">Kasir</h3>
+							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-4 px-2 flex items-center">
+								<div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+								Kasir
+							</h3>
 							<div class="space-y-1">
-								<a href="{{ route('kasir.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('kasir.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 group border border-transparent hover:border-green-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7" /></svg>
 									</span>
 									<span class="sidebar-label">Dashboard</span>
 								</a>
-								<a href="{{ route('kasir.pos') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('kasir.pos') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 group border border-transparent hover:border-green-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l2-2 2 2m-2-2v6m7-6h2a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 10H5a2 2 0 00-2 2v4a2 2 0 002 2h2" /></svg>
 									</span>
 									<span class="sidebar-label">Point of Sale</span>
 								</a>
-								<a href="{{ route('kasir.transactions') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('kasir.transactions') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 group border border-transparent hover:border-green-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10M5 7h14" /></svg>
 									</span>
 									<span class="sidebar-label">Transaksi</span>
 								</a>
-								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 group border border-transparent hover:border-green-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2H7l-4 4V10a2 2 0 012-2h2"/></svg>
 									</span>
@@ -140,33 +347,36 @@
 
 					@if(auth()->check() && auth()->user()->isGudang())
 						<div class="mb-6">
-							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-3 px-2">Gudang</h3>
+							<h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider section-title mb-4 px-2 flex items-center">
+								<div class="w-2 h-2 bg-orange-400 rounded-full mr-2"></div>
+								Gudang
+							</h3>
 							<div class="space-y-1">
-								<a href="{{ route('gudang.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('gudang.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-amber-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7" /></svg>
 									</span>
 									<span class="sidebar-label">Dashboard</span>
 								</a>
-								<a href="{{ route('gudang.products') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('gudang.products') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-amber-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2h-3l-2-2H9L7 5H4a2 2 0 00-2 2v6" /></svg>
 									</span>
 									<span class="sidebar-label">Produk</span>
 								</a>
-								<a href="{{ route('gudang.categories') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('gudang.categories') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-amber-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16" /></svg>
 									</span>
 									<span class="sidebar-label">Kategori</span>
 								</a>
-								<a href="{{ route('gudang.reports.stock') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('gudang.reports.stock') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-amber-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3a1 1 0 00-1 1v2H6a2 2 0 00-2 2v2h16V8a2 2 0 00-2-2h-4V4a1 1 0 00-1-1h-2zM4 15h16M10 19h4" /></svg>
 									</span>
 									<span class="sidebar-label">Laporan Stok</span>
 								</a>
-								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group">
+								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-amber-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2H7l-4 4V10a2 2 0 012-2h2"/></svg>
 									</span>
@@ -177,9 +387,9 @@
 					@endif
 
 					@if(auth()->check())
-						<div class="pt-4 border-t border-slate-700 mt-auto">
+						<div class="pt-6 border-t border-slate-700/50 mt-auto">
 							<!-- Profile Settings -->
-							<a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200 group mb-2">
+							<a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 group mb-3 border border-transparent hover:border-purple-500/30">
 								<span class="inline-flex w-5 h-5 items-center justify-center">
 									<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
 								</span>
@@ -190,7 +400,7 @@
 							<form method="POST" action="{{ route('logout') }}" class="js-confirm"
 									data-title="Logout?" data-text="Anda akan keluar dari sistem." data-icon="question" data-confirm="Ya, logout">
 								@csrf
-								<button type="submit" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-red-600 transition-all duration-200 group">
+								<button type="submit" class="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-red-500/20 hover:to-rose-500/20 transition-all duration-300 group border border-transparent hover:border-red-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" /></svg>
 									</span>
@@ -204,28 +414,31 @@
 		</div>
 
 		<!-- Main content -->
-		<div class="flex-1 flex flex-col overflow-hidden bg-gray-50">
-			<!-- Top bar -->
-			<div class="bg-white shadow-sm border-b border-gray-200">
+		<div class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+			<!-- Enhanced Top bar -->
+			<div class="bg-white/80 backdrop-blur-lg shadow-lg border-b border-gray-200/50 relative" style="z-index: 999999 !important;">
 				<div class="flex items-center justify-between h-16 px-4 sm:px-6">
-					<div class="flex items-center space-x-3">
-						<!-- Toggle Button - Works for both mobile and desktop -->
-						<button id="sidebarToggle" class="inline-flex items-center justify-center p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" aria-label="Toggle sidebar">
+					<div class="flex items-center space-x-4">
+						<!-- Enhanced Toggle Button -->
+						<button id="sidebarToggle" class="inline-flex items-center justify-center p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-md" aria-label="Toggle sidebar">
 							<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
 							</svg>
 						</button>
 						
-						<div>
-							<h2 class="text-lg font-semibold text-gray-900">@yield('title', $storeSettings['name'] ?? 'Sistem Koperasi')</h2>
-							<p class="text-sm text-gray-500 hidden sm:block">@yield('subtitle', '')</p>
+						<div class="flex items-center space-x-3">
+							<div class="w-1 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full"></div>
+							<div>
+								<h2 class="text-lg font-bold text-gray-900 tracking-tight">@yield('title', $storeSettings['name'] ?? 'Sistem Koperasi')</h2>
+								<p class="text-sm text-gray-600 hidden sm:block">@yield('subtitle', '')</p>
+							</div>
 						</div>
 					</div>
 					
-					<div class="flex items-center space-x-3">
+					<div class="flex items-center space-x-3 relative" style="z-index: 999999 !important;">
 						@if(auth()->check())
 							<!-- Desktop User Card -->
-							<div class="hidden sm:block relative" x-data="{ open: false }">
+							<div class="hidden sm:block relative user-dropdown" x-data="{ open: false }" style="z-index: 999999 !important;">
 								<button @click="open = !open" class="flex items-center space-x-3 group hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 									<div class="text-right">
 										<p class="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">{{ auth()->user()->name }}</p>
@@ -248,7 +461,8 @@
 									 x-transition:leave="transition ease-in duration-150"
 									 x-transition:leave-start="opacity-100 scale-100"
 									 x-transition:leave-end="opacity-0 scale-95"
-									 class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+									 class="dropdown-card absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+									 style="z-index: 999999 !important; position: absolute !important; right: 0 !important; top: 100% !important; margin-top: 0.5rem !important; background: white !important; border: 1px solid #e5e7eb !important; border-radius: 0.75rem !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; transform: none !important;">
 									
 									<!-- Card Header -->
 									<div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">

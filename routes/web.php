@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\GudangController;
@@ -60,7 +61,7 @@ Route::middleware('guest')->group(function () {
 		$credentials = request()->only('email', 'password');
 		$remember = (bool) request('remember', false);
 
-		if (auth()->attempt($credentials, $remember)) {
+		if (Auth::attempt($credentials, $remember)) {
 			// Regenerate session untuk mencegah session fixation
 			request()->session()->regenerate();
 			request()->session()->put('last_activity', now()->timestamp);
@@ -107,7 +108,7 @@ Route::post('/logout', function () {
 	\App\Models\ActivityLog::log('logout', 'User logout dari sistem');
 	
 	// Logout aman dan invalidate session
-	auth()->logout();
+	Auth::logout();
 	request()->session()->invalidate();
 	request()->session()->regenerateToken();
 	return redirect('/login')->with('success', 'Anda telah logout. Sampai jumpa!');
@@ -163,6 +164,7 @@ Route::middleware(['auth', 'active.session', 'role:kasir'])->prefix('kasir')->na
 	Route::get('/pos', [KasirController::class, 'pos'])->name('pos');
 	Route::post('/transactions', [KasirController::class, 'storeTransaction'])->name('transactions.store');
 	Route::get('/transactions', [KasirController::class, 'transactions'])->name('transactions');
+	Route::get('/transactions/export', [KasirController::class, 'exportTransactions'])->name('transactions.export');
 	Route::get('/transactions/{transaction}', [KasirController::class, 'showTransaction'])->name('transactions.show');
 	Route::post('/transactions/{transaction}/cancel', [KasirController::class, 'cancelTransaction'])->name('transactions.cancel');
 	Route::get('/transactions/{transaction}/print', [KasirController::class, 'printTransaction'])->name('transactions.print');
@@ -186,6 +188,7 @@ Route::middleware(['auth', 'active.session', 'role:gudang'])->prefix('gudang')->
 	Route::put('/categories/{category}', [GudangController::class, 'updateCategory'])->name('categories.update');
 	Route::delete('/categories/{category}', [GudangController::class, 'deleteCategory'])->name('categories.delete');
 	Route::get('/reports/stock', [GudangController::class, 'stockReport'])->name('reports.stock');
+	Route::get('/reports/stock/export', [GudangController::class, 'exportStockReport'])->name('reports.stock.export');
 });
 
 // Redirect root to appropriate dashboard based on user role

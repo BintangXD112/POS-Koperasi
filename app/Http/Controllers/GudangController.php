@@ -7,6 +7,9 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use App\Exports\StockReportExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GudangController extends Controller
 {
@@ -184,15 +187,112 @@ class GudangController extends Controller
         return back()->with('success', 'Kategori berhasil dihapus');
     }
 
-    public function stockReport()
+    public function stockReport(Request $request)
     {
-        $products = Product::with('category')
-            ->orderBy('stock', 'asc')
-            ->get();
-            
-        $lowStockProducts = Product::lowStock()->with('category')->get();
-        $outOfStockProducts = Product::where('stock', 0)->with('category')->get();
+        $query = Product::with('category');
         
-        return view('gudang.reports.stock', compact('products', 'lowStockProducts', 'outOfStockProducts'));
+        // Apply filters
+        if ($request->has('category') && $request->get('category')) {
+            $query->where('category_id', $request->get('category'));
+        }
+        
+        if ($request->has('stock_status') && $request->get('stock_status')) {
+            $status = $request->get('stock_status');
+            if ($status === 'safe') {
+                $query->where('stock', '>', 10);
+            } elseif ($status === 'low') {
+                $query->whereBetween('stock', [1, 10]);
+            } elseif ($status === 'out') {
+                $query->where('stock', 0);
+            }
+        }
+        
+        // Apply sorting
+        if ($request->has('sort') && $request->get('sort')) {
+            $sort = $request->get('sort');
+            if ($sort === 'stock_asc') {
+                $query->orderBy('stock', 'asc');
+            } elseif ($sort === 'stock_desc') {
+                $query->orderBy('stock', 'desc');
+            } elseif ($sort === 'name_asc') {
+                $query->orderBy('name', 'asc');
+            } elseif ($sort === 'name_desc') {
+                $query->orderBy('name', 'desc');
+            }
+        } else {
+            $query->orderBy('stock', 'asc'); // Default sort
+        }
+        
+        $products = $query->get();
+        
+        // Get categories for filter dropdown
+        $categories = \App\Models\Category::all();
+        
+        // Calculate stats based on filtered products
+        $lowStockProducts = $products->where('stock', '>', 0)->where('stock', '<=', 10);
+        $outOfStockProducts = $products->where('stock', 0);
+        
+        return view('gudang.reports.stock', compact('products', 'lowStockProducts', 'outOfStockProducts', 'categories'));
+    }
+
+    public function exportStockReport(Request $request)
+    {
+        $format = $request->get('format', 'excel');
+        $query = Product::with('category');
+        
+        // Apply same filters as stockReport method
+        if ($request->has('category') && $request->get('category')) {
+            $query->where('category_id', $request->get('category'));
+        }
+        
+        if ($request->has('stock_status') && $request->get('stock_status')) {
+            $status = $request->get('stock_status');
+            if ($status === 'safe') {
+                $query->where('stock', '>', 10);
+            } elseif ($status === 'low') {
+                $query->whereBetween('stock', [1, 10]);
+            } elseif ($status === 'out') {
+                $query->where('stock', 0);
+            }
+        }
+        
+        // Apply sorting
+        if ($request->has('sort') && $request->get('sort')) {
+            $sort = $request->get('sort');
+            if ($sort === 'stock_asc') {
+                $query->orderBy('stock', 'asc');
+            } elseif ($sort === 'stock_desc') {
+                $query->orderBy('stock', 'desc');
+            } elseif ($sort === 'name_asc') {
+                $query->orderBy('name', 'asc');
+            } elseif ($sort === 'name_desc') {
+                $query->orderBy('name', 'desc');
+            }
+        } else {
+            $query->orderBy('stock', 'asc'); // Default sort
+        }
+        
+        $products = $query->get();
+        
+        // Generate filename based on filter
+        $filename = 'laporan_stok_' . date('Y-m-d');
+        if ($request->has('category') && $request->get('category')) {
+            $category = Category::find($request->get('category'));
+            if ($category) {
+                $filename .= '_' . strtolower(str_replace(' ', '_', $category->name));
+            }
+        }
+        if ($request->has('stock_status') && $request->get('stock_status')) {
+            $status = $request->get('stock_status');
+            $filename .= '_' . $status;
+        }
+
+        if ($format === 'pdf') {
+            $pdf = Pdf::loadView('gudang.reports.export-pdf', compact('products'));
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->download($filename . '.pdf');
+        } else {
+            return Excel::download(new StockReportExport($products), $filename . '.xlsx');
+        }
     }
 }

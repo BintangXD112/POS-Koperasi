@@ -10,36 +10,67 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .gradient-bg {
-            background: linear-gradient(135deg,rgb(74, 105, 247) 0%,rgb(96, 98, 255) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
-       
+        .floating-animation {
+            animation: floating 6s ease-in-out infinite;
+        }
+        .pulse-animation {
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        .input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
     </style>
 </head>
-<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
-    <!-- Background Elements -->
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4 relative overflow-hidden">
+    <!-- Enhanced Background Elements -->
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full floating-animation"></div>
         <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-white opacity-10 rounded-full floating-animation" style="animation-delay: -3s;"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white opacity-5 rounded-full pulse-animation"></div>
+        <div class="absolute top-1/4 right-1/4 w-32 h-32 bg-white opacity-5 rounded-full floating-animation" style="animation-delay: -1.5s;"></div>
+        <div class="absolute bottom-1/4 left-1/4 w-24 h-24 bg-white opacity-5 rounded-full floating-animation" style="animation-delay: -4.5s;"></div>
     </div>
 
-    <div class="relative w-full max-w-md">
+    <div class="relative w-full max-w-md z-10">
         <!-- Main Login Card -->
-        <div class="glass-effect rounded-2xl shadow-2xl p-8 backdrop-blur-lg">
+        <div class="glass-effect rounded-3xl shadow-2xl p-8 backdrop-blur-lg animate-fade-in">
             <!-- Logo/Header -->
             <div class="text-center mb-8">
-                <div class="mx-auto w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mx-auto w-20 h-20 bg-gradient-to-br from-white to-white/80 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                 </div>
-                <h1 class="text-3xl font-bold text-white mb-2">{{ $storeSettings['name'] ?? 'Sistem Koperasi' }}</h1>
-                <p class="text-white text-opacity-80">Silakan login untuk melanjutkan</p>
+                <h1 class="text-3xl font-bold text-white mb-3 tracking-tight">{{ $storeSettings['name'] ?? 'Sistem Koperasi' }}</h1>
+                <p class="text-white/90 text-lg">Selamat datang kembali!</p>
+                <p class="text-white/70 text-sm mt-1">Silakan login untuk melanjutkan</p>
             </div>
             
             @if ($errors->any())
@@ -61,34 +92,34 @@
                 @csrf
                 
                 <!-- Email Field -->
-                <div class="space-y-2">
-                    <label for="email" class="block text-sm font-medium text-white text-opacity-90">Email</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="space-y-3">
+                    <label for="email" class="block text-sm font-semibold text-white/90">Email</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-white/70 group-focus-within:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
                             </svg>
                         </div>
                         <input id="email" name="email" type="email" required 
-                               class="block w-full pl-10 pr-3 py-3 border border-white border-opacity-30 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-transparent transition-all duration-200" 
+                               class="input-focus block w-full pl-12 pr-4 py-4 border border-white/30 rounded-xl bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-300 backdrop-blur-sm" 
                                placeholder="Masukkan email Anda" value="{{ old('email') }}">
                     </div>
                 </div>
 
                 <!-- Password Field -->
-                <div class="space-y-2">
-                    <label for="password" class="block text-sm font-medium text-white text-opacity-90">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="space-y-3">
+                    <label for="password" class="block text-sm font-semibold text-white/90">Password</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-white/70 group-focus-within:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                             </svg>
                         </div>
                         <input id="password" name="password" type="password" required 
-                               class="block w-full pl-10 pr-12 py-3 border border-white border-opacity-30 rounded-lg bg-white bg-opacity-10 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-transparent transition-all duration-200" 
+                               class="input-focus block w-full pl-12 pr-14 py-4 border border-white/30 rounded-xl bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-300 backdrop-blur-sm" 
                                placeholder="Masukkan password Anda">
                         <button type="button" tabindex="-1" aria-label="toggle password" data-toggle-password="#password"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-white text-opacity-60 hover:text-white transition-colors duration-200">
+                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-white/70 hover:text-white transition-colors duration-200">
                             <!-- Eye (password hidden, click to show) -->
                             <svg class="icon-eye w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -104,31 +135,32 @@
 
                 <!-- Remember Me & Forgot Password -->
                 <div class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-white border-opacity-30 rounded bg-white bg-opacity-10" {{ old('remember') ? 'checked' : '' }}>
-                        <span class="ml-2 text-sm text-white text-opacity-80">Ingat saya</span>
+                    <label class="flex items-center group cursor-pointer">
+                        <input type="checkbox" name="remember" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-white/30 rounded bg-white/10 focus:ring-2 focus:ring-white/50 transition-all duration-200" {{ old('remember') ? 'checked' : '' }}>
+                        <span class="ml-3 text-sm text-white/90 group-hover:text-white transition-colors duration-200">Ingat saya</span>
                     </label>
-                    <a href="#" class="text-sm text-white text-opacity-80 hover:text-white transition-colors duration-200">Lupa password?</a>
+                    <a href="#" class="text-sm text-white/80 hover:text-white transition-colors duration-200 hover:underline">Lupa password?</a>
                 </div>
 
                 <!-- Login Button -->
-                <div>
+                <div class="pt-2">
                     <button type="submit" 
-                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            class="btn-hover group relative w-full flex justify-center py-4 px-6 border border-transparent text-base font-semibold rounded-xl text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-opacity-50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-4">
                             <svg class="h-5 w-5 text-gray-500 group-hover:text-gray-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                             </svg>
                         </span>
-                        Login
+                        <span class="font-semibold">Masuk ke Sistem</span>
                     </button>
                 </div>
             </form>
 
             <!-- Footer -->
             <div class="mt-8 text-center">
-                <p class="text-xs text-white text-opacity-60">
-                    © 2025 Bintang. All rights reserved.
+                <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-4"></div>
+                <p class="text-xs text-white/60">
+                    © 2025 {{ $storeSettings['name'] ?? 'Sistem Koperasi' }}. All rights reserved.
                 </p>
             </div>
         </div>
