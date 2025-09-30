@@ -138,7 +138,41 @@ class AdminController extends Controller
 			->take(10)
 			->get();
 
-		return view('admin.reports', compact('monthlyRevenue','dailyRevenue','topProducts','year','month','totalTransactionsFiltered','totalRevenueSum'));
+		// Category performance data for chart
+		$categoryPerformance = \App\Models\Category::with(['products'])
+			->get()
+			->map(function ($category) use ($yearStr, $monthStr) {
+				$transactionCount = 0;
+				foreach ($category->products as $product) {
+					$count = $product->transactionDetails()
+						->whereHas('transaction', function ($t) use ($yearStr, $monthStr) {
+							$t->where('status', 'completed')
+								->whereRaw('substr(created_at,1,4) = ?', [$yearStr]);
+							if ($monthStr !== '') {
+								$t->whereRaw('substr(created_at,6,2) = ?', [$monthStr]);
+							}
+						})
+						->count();
+					$transactionCount += $count;
+				}
+				return [
+					'id' => $category->id,
+					'name' => $category->name,
+					'transaction_count' => $transactionCount
+				];
+			})
+			->sortByDesc('transaction_count')
+			->values();
+
+		// Sales trend data for last 12 months
+		$salesTrend = Transaction::completed()
+			->whereRaw('created_at >= date("now", "-12 months")')
+			->selectRaw('substr(created_at,1,7) as month, SUM(CAST(total_amount AS REAL)) as revenue, COUNT(*) as transaction_count')
+			->groupBy('month')
+			->orderBy('month')
+			->get();
+
+		return view('admin.reports', compact('monthlyRevenue','dailyRevenue','topProducts','year','month','totalTransactionsFiltered','totalRevenueSum','categoryPerformance','salesTrend'));
 	}
 
 	public function exportReports(Request $request)

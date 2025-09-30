@@ -49,53 +49,52 @@
         </form>
     </div>
 
-    <!-- Monthly Revenue Chart -->
+    <!-- Revenue Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Monthly/Daily Revenue Chart -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    {{ empty($month) ? 'Pendapatan Bulanan' : 'Pendapatan Harian' }}
+                    @if(!empty($month))
+                        ({{ date('F', mktime(0, 0, 0, (int)$month, 1)) }} {{ $year }})
+                    @else
+                        (Tahun {{ $year }})
+                    @endif
+                </h3>
+                <div class="h-80">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products Chart -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Produk Terlaris</h3>
+                <div class="h-80">
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Performance Chart -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                {{ empty($month) ? 'Pendapatan Bulanan' : 'Pendapatan Harian' }}
-                @if(!empty($month))
-                    ({{ date('F', mktime(0, 0, 0, (int)$month, 1)) }} {{ $year }})
-                @else
-                    (Tahun {{ $year }})
-                @endif
-            </h3>
-            <div class="space-y-3">
-                @if(empty($month))
-                    @forelse($monthlyRevenue as $revenue)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">
-                                    {{ date('F', mktime(0, 0, 0, intval($revenue->month), 1)) }}
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-green-600">
-                                    Rp {{ number_format($revenue->revenue, 0, ',', '.') }}
-                                </p>
-                            </div>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 text-center py-4">Belum ada data pendapatan</p>
-                    @endforelse
-                @else
-                    @forelse($dailyRevenue as $revenue)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">
-                                    {{ \Carbon\Carbon::parse($revenue->day)->format('d F Y') }}
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-green-600">
-                                    Rp {{ number_format($revenue->revenue, 0, ',', '.') }}
-                                </p>
-                            </div>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 text-center py-4">Belum ada data pendapatan</p>
-                    @endforelse
-                @endif
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Performa Kategori Produk</h3>
+            <div class="h-80">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales Trend Chart -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Trend Penjualan 12 Bulan Terakhir</h3>
+            <div class="h-80">
+                <canvas id="salesTrendChart"></canvas>
             </div>
         </div>
     </div>
@@ -180,4 +179,252 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Revenue Chart Data
+    const revenueData = @json($monthlyRevenue ?? $dailyRevenue ?? []);
+    const revenueLabels = revenueData.map(item => {
+        if (item.month) {
+            return new Date({{ $year ?? date('Y') }}, item.month - 1).toLocaleDateString('id-ID', { month: 'long' });
+        } else if (item.day) {
+            return new Date(item.day).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        }
+        return '';
+    });
+    const revenueValues = revenueData.map(item => item.revenue || 0);
+
+    // Top Products Data
+    const topProductsData = @json($topProducts ?? []);
+    const productLabels = topProductsData.map(item => item.name);
+    const productValues = topProductsData.map(item => item.transaction_details_count || 0);
+
+    // Category Performance Data
+    const categoryPerformanceData = @json($categoryPerformance ?? []);
+    const categoryLabels = categoryPerformanceData.map(item => item.name);
+    const categoryValues = categoryPerformanceData.map(item => item.transaction_count || 0);
+
+    // Sales Trend Data
+    const salesTrendData = @json($salesTrend ?? []);
+    const trendLabels = salesTrendData.map(item => {
+        const [year, month] = item.month.split('-');
+        return new Date(year, month - 1).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
+    });
+    const trendRevenue = salesTrendData.map(item => item.revenue || 0);
+    const trendTransactions = salesTrendData.map(item => item.transaction_count || 0);
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Pendapatan (Rp)',
+                data: revenueValues,
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(59, 130, 246)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Pendapatan: Rp ' + context.parsed.y.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+
+    // Top Products Chart
+    const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+    new Chart(topProductsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: productLabels,
+            datasets: [{
+                data: productValues,
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(6, 182, 212, 0.8)',
+                    'rgba(34, 197, 94, 0.8)'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + context.parsed + ' transaksi (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Category Performance Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: categoryValues,
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: 'rgb(16, 185, 129)',
+                borderWidth: 2,
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Transaksi: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Sales Trend Chart
+    const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+    new Chart(salesTrendCtx, {
+        type: 'bar',
+        data: {
+            labels: trendLabels,
+            datasets: [{
+                label: 'Pendapatan (Rp)',
+                data: trendRevenue,
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: 'rgb(16, 185, 129)',
+                borderWidth: 2,
+                yAxisID: 'y'
+            }, {
+                label: 'Jumlah Transaksi',
+                data: trendTransactions,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 2,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            if (context.datasetIndex === 0) {
+                                return 'Pendapatan: Rp ' + context.parsed.y.toLocaleString('id-ID');
+                            } else {
+                                return 'Transaksi: ' + context.parsed.y;
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                }
+            }
+        }
+    });
+});
+</script>
 @endsection
