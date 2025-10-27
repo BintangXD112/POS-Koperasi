@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Sistem')
+@section('title', 'Data Transaksi')
 
 @section('content')
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">Laporan Sistem</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">Data Transaksi</h1>
             <p class="mt-1 text-sm text-gray-600">Analisis data dan laporan sistem koperasi</p>
         </div>
         <form method="GET" action="{{ route('admin.reports') }}" class="flex items-end space-x-3">
@@ -32,14 +32,16 @@
             <div class="flex items-center space-x-2">
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">Terapkan</button>
                 <a href="{{ route('admin.reports.export', ['year' => $year ?? date('Y'), 'month' => $month ?? '', 'format' => 'excel']) }}"
-                   class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
+                   class="export-btn inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
+                   onclick="LoadingManager.show('Exporting...')">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Export Excel
                 </a>
                 <a href="{{ route('admin.reports.export', ['year' => $year ?? date('Y'), 'month' => $month ?? '', 'format' => 'pdf']) }}"
-                   class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
+                   class="export-btn inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
+                   onclick="LoadingManager.show('Exporting...')">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
@@ -182,6 +184,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    LoadingManager.show('Loading...');
     // Revenue Chart Data
     const revenueData = @json($monthlyRevenue ?? $dailyRevenue ?? []);
     const revenueLabels = revenueData.map(item => {
@@ -425,6 +428,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Hide loading when charts are ready
+    setTimeout(() => LoadingManager.hide(), 500);
 });
 </script>
 @endsection

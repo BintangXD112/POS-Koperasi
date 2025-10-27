@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\Product;
+use App\Models\AppSetting;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Exports\ReportsExport;
@@ -173,6 +174,62 @@ class AdminController extends Controller
 			->get();
 
 		return view('admin.reports', compact('monthlyRevenue','dailyRevenue','topProducts','year','month','totalTransactionsFiltered','totalRevenueSum','categoryPerformance','salesTrend'));
+	}
+
+	public function appSettings()
+	{
+		$lazyLoading = AppSetting::getValue('lazy_loading', true);
+		$darkMode = AppSetting::getValue('dark_mode', false);
+		$emailNotifications = AppSetting::getValue('email_notifications', true);
+		$browserNotifications = AppSetting::getValue('browser_notifications', true);
+		$autoExportEnabled = AppSetting::getValue('auto_export_enabled', false);
+		$autoExportSchedule = AppSetting::getValue('auto_export_schedule', 'daily');
+		$autoExportFormat = AppSetting::getValue('auto_export_format', 'excel');
+		$dataCleanupEnabled = AppSetting::getValue('data_cleanup_enabled', false);
+		$dataRetentionDays = AppSetting::getValue('data_retention_days', 365);
+		
+		return view('admin.app-settings', compact(
+			'lazyLoading', 'darkMode', 'emailNotifications', 'browserNotifications',
+			'autoExportEnabled', 'autoExportSchedule', 'autoExportFormat',
+			'dataCleanupEnabled', 'dataRetentionDays'
+		));
+	}
+
+	public function updateAppSettings(Request $request)
+	{
+		$request->validate([
+			'lazy_loading' => 'boolean',
+			'dark_mode' => 'boolean',
+			'email_notifications' => 'boolean',
+			'browser_notifications' => 'boolean',
+			'auto_export_enabled' => 'boolean',
+			'auto_export_schedule' => 'string|in:daily,weekly,monthly',
+			'auto_export_format' => 'string|in:excel,pdf',
+			'data_cleanup_enabled' => 'boolean',
+			'data_retention_days' => 'integer|min:30|max:3650'
+		]);
+
+		// Performance Settings
+		AppSetting::setValue('lazy_loading', $request->boolean('lazy_loading'), 'boolean', 'Enable/disable lazy loading for better user experience');
+		
+		// Theme Settings
+		AppSetting::setValue('dark_mode', $request->boolean('dark_mode'), 'boolean', 'Enable dark mode theme for better viewing experience');
+		
+		// Notification Settings
+		AppSetting::setValue('email_notifications', $request->boolean('email_notifications'), 'boolean', 'Enable email notifications for transactions and updates');
+		AppSetting::setValue('browser_notifications', $request->boolean('browser_notifications'), 'boolean', 'Enable browser push notifications');
+		
+		// Auto Export Settings
+		AppSetting::setValue('auto_export_enabled', $request->boolean('auto_export_enabled'), 'boolean', 'Enable automatic export of reports');
+		AppSetting::setValue('auto_export_schedule', $request->get('auto_export_schedule'), 'string', 'Auto export schedule: daily, weekly, monthly');
+		AppSetting::setValue('auto_export_format', $request->get('auto_export_format'), 'string', 'Default export format: excel, pdf');
+		
+		// Data Cleanup Settings
+		AppSetting::setValue('data_cleanup_enabled', $request->boolean('data_cleanup_enabled'), 'boolean', 'Enable automatic cleanup of old data');
+		AppSetting::setValue('data_retention_days', $request->get('data_retention_days'), 'integer', 'Number of days to retain data before cleanup');
+
+		return redirect()->route('admin.app-settings')
+			->with('success', 'Pengaturan aplikasi berhasil diperbarui!');
 	}
 
 	public function exportReports(Request $request)

@@ -9,6 +9,12 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\StoreSettingController;
+use App\Http\Controllers\MarketAnalysisController;
+use App\Http\Controllers\SmartInventoryController;
+use App\Http\Controllers\CustomerIntelligenceController;
+use App\Http\Controllers\PredictiveAnalyticsController;
+use App\Http\Controllers\AutomatedReportingController;
+use App\Http\Controllers\AIChatbotController;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -156,7 +162,43 @@ Route::middleware(['auth', 'active.session', 'role:admin'])->prefix('admin')->na
 	Route::delete('/store-settings/logo', [StoreSettingController::class, 'removeLogo'])->name('store-settings.remove-logo');
 	Route::get('/store-settings/api', [StoreSettingController::class, 'getSettings'])->name('store-settings.api');
 	Route::get('/store-settings/timezones', [StoreSettingController::class, 'getTimezones'])->name('store-settings.timezones');
+	
+	// App Settings
+	Route::get('/app-settings', [AdminController::class, 'appSettings'])->name('app-settings');
+	Route::post('/app-settings', [AdminController::class, 'updateAppSettings'])->name('app-settings.update');
+	
+        // Market Analysis
+        Route::get('/market-analysis', [MarketAnalysisController::class, 'index'])->name('market-analysis.index');
+        Route::get('/market-analysis/create', [MarketAnalysisController::class, 'create'])->name('market-analysis.create');
+        Route::post('/market-analysis/generate', [MarketAnalysisController::class, 'generateAnalysis'])->name('market-analysis.generate');
+        Route::get('/market-analysis/{marketAnalysis}', [MarketAnalysisController::class, 'show'])->name('market-analysis.show');
+        Route::delete('/market-analysis/{marketAnalysis}', [MarketAnalysisController::class, 'destroy'])->name('market-analysis.destroy');
+        
+        // Smart Inventory Management
+        Route::get('/smart-inventory', [SmartInventoryController::class, 'index'])->name('smart-inventory.index');
+        Route::post('/smart-inventory/generate', [SmartInventoryController::class, 'generateRecommendations'])->name('smart-inventory.generate');
+        
+        // Customer Intelligence
+        Route::get('/customer-intelligence', [CustomerIntelligenceController::class, 'index'])->name('customer-intelligence.index');
+        Route::post('/customer-intelligence/generate', [CustomerIntelligenceController::class, 'generateInsights'])->name('customer-intelligence.generate');
+        
+        // Predictive Analytics
+        Route::get('/predictive-analytics', [PredictiveAnalyticsController::class, 'index'])->name('predictive-analytics.index');
+        Route::post('/predictive-analytics/generate', [PredictiveAnalyticsController::class, 'generateForecast'])->name('predictive-analytics.generate');
+        
+    // Automated Reporting
+    Route::get('/automated-reporting', [AutomatedReportingController::class, 'index'])->name('automated-reporting.index');
+    Route::post('/automated-reporting/generate', [AutomatedReportingController::class, 'generateReport'])->name('automated-reporting.generate');
+    Route::post('/automated-reporting/schedule', [AutomatedReportingController::class, 'scheduleReport'])->name('automated-reporting.schedule');
+
+    // AI Chatbot
+    Route::get('/ai-chatbot', [AIChatbotController::class, 'index'])->name('ai-chatbot.index');
+    Route::post('/ai-chatbot/send', [AIChatbotController::class, 'sendMessage'])->name('ai-chatbot.send');
+    Route::post('/ai-chatbot/session/create', [AIChatbotController::class, 'createSession'])->name('ai-chatbot.session.create');
+    Route::post('/ai-chatbot/session/close', [AIChatbotController::class, 'closeSession'])->name('ai-chatbot.session.close');
+    Route::get('/ai-chatbot/sessions', [AIChatbotController::class, 'getSessions'])->name('ai-chatbot.sessions');
 });
+
 
 // Kasir routes
 Route::middleware(['auth', 'active.session', 'role:kasir'])->prefix('kasir')->name('kasir.')->group(function () {

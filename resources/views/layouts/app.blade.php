@@ -230,6 +230,82 @@
 			z-index: 1 !important;
 		}
 		
+		/* Loading Overlay Styles */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.3);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999999;
+			backdrop-filter: blur(2px);
+		}
+		
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid rgba(255, 255, 255, 0.3);
+			border-top: 3px solid #3b82f6;
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+		
+		.loading-text {
+			color: white;
+			font-size: 14px;
+			font-weight: 500;
+			margin-top: 15px;
+			text-align: center;
+		}
+		
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+		
+		/* Button loading state */
+		.btn-loading {
+			position: relative;
+			pointer-events: none;
+			opacity: 0.7;
+		}
+		
+		.btn-loading::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 20px;
+			height: 20px;
+			margin: -10px 0 0 -10px;
+			border: 2px solid transparent;
+			border-top: 2px solid currentColor;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+		
+		/* Page transition loading */
+		.page-loading {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+			background-size: 200% 100%;
+			animation: loading-bar 2s ease-in-out infinite;
+			z-index: 9999998;
+		}
+		
+		@keyframes loading-bar {
+			0% { background-position: 200% 0; }
+			100% { background-position: -200% 0; }
+		}
+		
 		/* Ensure dropdown is always on top */
 		.user-dropdown .dropdown-card {
 			z-index: 999999 !important;
@@ -242,6 +318,55 @@
 			border-radius: 0.75rem !important;
 			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
 			transform: none !important;
+		}
+		
+		/* Dark Mode Styles */
+		.dark {
+			color-scheme: dark;
+		}
+
+		.dark .bg-white {
+			background-color: #1f2937 !important;
+		}
+
+		.dark .text-gray-900 {
+			color: #f9fafb !important;
+		}
+
+		.dark .text-gray-700 {
+			color: #d1d5db !important;
+		}
+
+		.dark .text-gray-500 {
+			color: #9ca3af !important;
+		}
+
+		.dark .border-gray-300 {
+			border-color: #4b5563 !important;
+		}
+
+		.dark .bg-gray-50 {
+			background-color: #374151 !important;
+		}
+
+		.dark .bg-gray-100 {
+			background-color: #4b5563 !important;
+		}
+
+		.dark .shadow {
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
+		}
+
+		.dark .shadow-lg {
+			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+		}
+
+		.dark .shadow-xl {
+			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+		}
+
+		.dark .shadow-2xl {
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
 		}
 	</style>
 </head>
@@ -290,6 +415,42 @@
 									</span>
 									<span class="sidebar-label">Laporan</span>
 								</a>
+								<a href="{{ route('admin.market-analysis.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
+									<span class="inline-flex w-5 h-5 items-center justify-center">
+										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+									</span>
+									<span class="sidebar-label">Analisis Pasar</span>
+								</a>
+								<a href="{{ route('admin.smart-inventory.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 group border border-transparent hover:border-green-500/30">
+									<span class="inline-flex w-5 h-5 items-center justify-center">
+										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+									</span>
+									<span class="sidebar-label">Smart Inventory</span>
+								</a>
+								<a href="{{ route('admin.customer-intelligence.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 group border border-transparent hover:border-purple-500/30">
+									<span class="inline-flex w-5 h-5 items-center justify-center">
+										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" /></svg>
+									</span>
+									<span class="sidebar-label">Customer Intelligence</span>
+								</a>
+								<a href="{{ route('admin.predictive-analytics.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/20 hover:to-purple-500/20 transition-all duration-300 group border border-transparent hover:border-indigo-500/30">
+									<span class="inline-flex w-5 h-5 items-center justify-center">
+										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+									</span>
+									<span class="sidebar-label">Predictive Analytics</span>
+								</a>
+                <a href="{{ route('admin.automated-reporting.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/20 hover:to-red-500/20 transition-all duration-300 group border border-transparent hover:border-orange-500/30">
+                    <span class="inline-flex w-5 h-5 items-center justify-center">
+                        <svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </span>
+                    <span class="sidebar-label">Automated Reporting</span>
+                </a>
+                <a href="{{ route('admin.ai-chatbot.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-blue-500/20 transition-all duration-300 group border border-transparent hover:border-cyan-500/30">
+                    <span class="inline-flex w-5 h-5 items-center justify-center">
+                        <svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    </span>
+                    <span class="sidebar-label">AI Chatbot</span>
+                </a>
 								<a href="{{ route('admin.activity-logs') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
@@ -301,6 +462,12 @@
 										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
 									</span>
 									<span class="sidebar-label">Pengaturan Toko</span>
+								</a>
+								<a href="{{ route('admin.app-settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
+									<span class="inline-flex w-5 h-5 items-center justify-center">
+										<svg class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" /></svg>
+									</span>
+									<span class="sidebar-label">Pengaturan Aplikasi</span>
 								</a>
 								<a href="{{ route('chat.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 transition-all duration-300 group border border-transparent hover:border-blue-500/30">
 									<span class="inline-flex w-5 h-5 items-center justify-center">
@@ -786,5 +953,89 @@
 @endif
 
 	@stack('scripts')
+
+	<!-- Global Loading Overlay -->
+	<div id="globalLoading" class="loading-overlay" style="display: none;">
+		<div class="text-center">
+			<div class="loading-spinner"></div>
+			<div class="loading-text" id="loadingText">Memuat...</div>
+		</div>
+	</div>
+
+	<!-- Page Loading Bar -->
+	<div id="pageLoading" class="page-loading" style="display: none;"></div>
+
+	<script>
+		// Global Loading Management
+		window.LoadingManager = {
+			enabled: {{ \App\Models\AppSetting::getValue('lazy_loading', true) ? 'true' : 'false' }},
+			
+			show: function(message = 'Loading...') {
+				if (!this.enabled) return;
+				document.getElementById('loadingText').textContent = message;
+				document.getElementById('globalLoading').style.display = 'flex';
+			},
+			hide: function() {
+				if (!this.enabled) return;
+				document.getElementById('globalLoading').style.display = 'none';
+			},
+			showPageLoading: function() {
+				if (!this.enabled) return;
+				document.getElementById('pageLoading').style.display = 'block';
+			},
+			hidePageLoading: function() {
+				if (!this.enabled) return;
+				document.getElementById('pageLoading').style.display = 'none';
+			},
+			updateSetting: function(enabled) {
+				this.enabled = enabled;
+			}
+		};
+
+		// Intercept form submissions
+		document.addEventListener('submit', function(e) {
+			if (e.target.tagName === 'FORM') {
+				LoadingManager.show('Saving...');
+			}
+		});
+
+		// Intercept link clicks
+		document.addEventListener('click', function(e) {
+			const link = e.target.closest('a');
+			if (link && link.href && !link.href.includes('#') && !link.target) {
+				LoadingManager.show('Loading...');
+			}
+		});
+
+		// Handle page load completion
+		window.addEventListener('load', function() {
+			LoadingManager.hide();
+			LoadingManager.hidePageLoading();
+		});
+
+		// Handle AJAX requests
+		const originalFetch = window.fetch;
+		window.fetch = function(...args) {
+			LoadingManager.show('Loading...');
+			return originalFetch.apply(this, args)
+				.finally(() => LoadingManager.hide());
+		};
+
+		// Handle browser back/forward
+		window.addEventListener('popstate', function() {
+			LoadingManager.show('Loading...');
+		});
+
+		// Initialize Dark Mode
+		document.addEventListener('DOMContentLoaded', function() {
+			// Check for saved dark mode preference
+			const savedDarkMode = localStorage.getItem('darkMode');
+			const darkModeSetting = {{ \App\Models\AppSetting::getValue('dark_mode', false) ? 'true' : 'false' }};
+			
+			if (savedDarkMode === 'true' || darkModeSetting) {
+				document.documentElement.classList.add('dark');
+			}
+		});
+	</script>
 </body>
 </html>

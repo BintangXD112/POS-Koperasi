@@ -146,7 +146,7 @@ Setelah menjalankan seeder, gunakan akun default:
 - `GET /admin/users/{id}/edit` - Form edit user
 - `PUT /admin/users/{id}` - Update user
 - `DELETE /admin/users/{id}` - Hapus user
-- `GET /admin/reports` - Laporan sistem
+- `GET /admin/reports` - Laporan Transaksi
 - `GET /admin/activity-logs` - Log aktivitas user
 - `GET /admin/activity-logs/{id}` - Detail log aktivitas
 - `GET /admin/activity-logs/export` - Export log aktivitas
